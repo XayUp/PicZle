@@ -139,8 +139,15 @@ class _HomeState extends State<Home> {
           dialogTitle: "Selecione a pasta de destino",
         );
       } else {
-        final tempDir = await getTemporaryDirectory();
-        selectedPath = tempDir.path;
+        String? aDir = await FilePicker.platform.getDirectoryPath(
+          dialogTitle: "Selecione a pasta de destino",
+        );
+
+        if (aDir == "/") {
+          aDir = (await getTemporaryDirectory()).path;
+        }
+
+        selectedPath = aDir;
       }
 
       if (selectedPath == null) {
