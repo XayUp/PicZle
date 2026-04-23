@@ -134,7 +134,7 @@ class _HomeState extends State<Home> {
       String? selectedPath;
 
       // 1. Solicitar local de salvamento
-      if (!kIsWeb && Platform.isLinux) {
+      if (!kIsWeb && !Platform.isAndroid) {
         selectedPath = await FilePicker.platform.getDirectoryPath(
           dialogTitle: "Selecione a pasta de destino",
         );
