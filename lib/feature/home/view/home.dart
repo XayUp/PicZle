@@ -10,6 +10,8 @@ import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:piczle/feature/home/widgets/paper_icon.dart';
+import 'package:piczle/feature/home/widgets/paper_preset.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:piczle/main.dart'; // Importando o themeNotifier
 import 'dart:isolate';
@@ -58,6 +60,15 @@ class _HomeState extends State<Home> {
   double _pdfMarginPercent = 5; // %
   pw.BoxFit _pdfBoxFit = pw.BoxFit.contain;
   String _exportFileName = 'piczle_{n}';
+
+  final List<PaperPreset> presets = [
+    PaperPreset('A3', 297, 420),
+    PaperPreset('A4', 210, 297),
+    PaperPreset('A5', 148, 210),
+    PaperPreset('A6', 105, 148),
+    PaperPreset('Ofício', 215.9, 355.6),
+    PaperPreset('Etiqueta', 100, 30),
+  ];
 
   // Variáveis de controle de progresso
   List<String> _exportLog = [];
@@ -384,6 +395,21 @@ class _HomeState extends State<Home> {
                           (val) {
                             setDialogState(() => _pdfMarginPercent = val);
                           },
+                        ),
+                        Row(
+                          children: [
+                            const Text("Dimensões da Página"),
+                            const Expanded(child: SizedBox.shrink()),
+                            PaperPresetDrop(
+                              presets: presets,
+                              onItemSelected: (h, w) {
+                                setDialogState(() {
+                                  _pdfPageWidth = w;
+                                  _pdfPageHeight = h;
+                                });
+                              },
+                            ),
+                          ], // O botão fica aqui no canto
                         ),
                         ListTile(
                           title: const Text("Ajuste"),
@@ -736,7 +762,11 @@ class _HomeState extends State<Home> {
         Expanded(
           flex: 5,
           child: Slider(
-            value: value.toDouble(),
+            value: value.toDouble() > max
+                ? max
+                : value.toDouble() < min
+                ? min
+                : value.toDouble(),
             min: min,
             max: max,
             divisions: (max - min).toInt(),
